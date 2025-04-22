@@ -21,13 +21,13 @@ jobs:
         run: npm install
 
       - name: Build project
-        run: npm run build
+        run: npm run build # Ensure your build script is configured correctly
 
       - name: Upload production-ready build files
         uses: actions/upload-artifact@v4
         with:
           name: production-files
-          path: ./dist
+          path: ./dist # Ensure your build outputs to this directory
 
   deploy:
     name: Deploy
@@ -45,5 +45,6 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.ACTION_TOKEN }}
+          github_token: ${{ secrets.ACTION_TOKEN }} # Use GITHUB_TOKEN for better permissions
           publish_dir: ./dist
+          force_orphan: true # Useful for single-page apps
