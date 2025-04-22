@@ -1,5 +1,7 @@
 # This workflow will build and deploy a web application to GitHub Pages
 # Name of the workflow
+# This workflow will build and deploy a web application to GitHub Pages
+# Name of the workflow
 name: Deploy to GitHub Pages
 
 # Trigger the workflow on pushes to the main branch
@@ -39,10 +41,17 @@ jobs:
       - name: Build the app
         run: npm run build
 
+      # Upload the built site as an artifact
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: github-pages
+          path: ./dist
+
       # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
         with:
           # The path to the directory containing the deployment content
-          artifact_dir: ./dist # Or your build output directory (usually 'dist')
+          artifact_name: github-pages
 
