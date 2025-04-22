@@ -11,6 +11,9 @@ jobs:
     permissions:
       pages: write
       id-token: write
+    environment:
+      name: github-pages
+      url: ${{ github.event.repository.homepage }} # Optional: Your website URL
     steps:
       - name: Checkout
         uses: actions/checkout@v3
