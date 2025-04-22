@@ -9,12 +9,14 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    permissions:
+      pages: write
+      id-token: write
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 20
@@ -22,14 +24,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build project
+      - name: Build
         run: npm run build
 
       - name: Deploy to GitHub Pages
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          npx gh-pages -d dist \
-            -u "github-actions[bot] <github-actions[bot]@users.noreply.github.com>" \
-            -r "https://x-access-token:${GITHUB_TOKEN}@github.com/cx-joaoguedes/cx-joaoguedes.git"
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_dir: dist
 
