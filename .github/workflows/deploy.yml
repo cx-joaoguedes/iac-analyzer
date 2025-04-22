@@ -1,56 +1,49 @@
-# This workflow will build and deploy a web application to GitHub Pages
-# Name of the workflow
-name: Deploy to GitHub Pages
+name: Deploy
 
-# Trigger the workflow on pushes to the main branch
 on:
   push:
-    branches: [ "main" ] # Or your main branch name
+    branches:
+      - main
 
-# Allow this workflow to delete and create deployments
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-# A single job to perform the deployment
 jobs:
-  deploy:
-    # Add this environment section
-    environment:
-      name: github-pages
-    # The type of runner the job will run on
+  build:
+    name: Build
     runs-on: ubuntu-latest
 
-    # Steps of the job
     steps:
-      # Checkout the repository to the GitHub Actions runner
-      - name: Checkout
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      # Setup Node.js environment to build the app
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
-        with:
-          node-version: '20' # Or your Node.js version
 
-      # Install dependencies
       - name: Install dependencies
-        run: npm install
+        uses: bahmutov/npm-install@v1
 
-      # Build the React/Vite application
-      - name: Build the app
+      - name: Build project
         run: npm run build
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+      - name: Upload production-ready build files
+        uses: actions/upload-artifact@v4
         with:
-          name: github-pages
+          name: production-files
           path: ./dist
 
-      # Deploy to GitHub Pages
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
         with:
-          # The path to the directory containing the deployment content
-          artifact_name: github-pages
+          name: production-files
+          path: ./dist
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
