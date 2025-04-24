@@ -17,6 +17,14 @@ export const parseCSV = (file) => {
           comment: item.comment ?? "",
           group_name: item.group_name ?? "Not Set",
         }));
+
+        // Sort results by "source" column, prioritizing "kics"
+        parsedResults.sort((a, b) => {
+          if (a.source === "kics" && b.source !== "kics") return -1;
+          if (a.source !== "kics" && b.source === "kics") return 1;
+          return 0;
+        });
+
         resolve({
           data: parsedResults,
           fileName: file.name,
